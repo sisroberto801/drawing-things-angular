@@ -112,7 +112,11 @@ For 2D zoom/pan, implement using native Canvas `ctx.transform()` or adopt `panzo
 | Free & Open | All libraries must be MIT or similarly permissive licenses. No paid dependencies. |
 | Global Access | Static build deployable to CDN; no region restrictions. |
 
-## 5. Project Structure (Recommended)
+## 5. Project Structure (Current)
+
+The project follows a **layout shell + feature modules** architecture. `App` boots the router; `LayoutComponent` composes the application shell (header / body / footer, with left and right panels inside the body); feature code lives under `features/`; singleton services live under `core/`.
+
+Naming convention: Angular files use the `*.component.*` suffix (`header.component.ts`, `header.component.html`, `header.component.scss`, `header.component.spec.ts`).
 
 ```text
 drawing-things-angular/
@@ -124,86 +128,98 @@ drawing-things-angular/
 │
 ├── public/
 │   ├── favicon.ico
-│   └── assets/
-│       ├── models/                  # GLTF/GLB clothing models
-│       │   ├── tshirt.glb
-│       │   └── pants.glb
-│       ├── textures/                # Fabric textures for 3D
-│       └── icons/                   # Toolbar and UI icons
+│   └── assets/                        # GLTF/GLB models, textures, icons
 │
 ├── src/
 │   ├── app/
-│   │   ├── core/                    # Singleton services, guards, interceptors
+│   │   ├── core/                      # Singleton services, guards, interceptors
 │   │   │   ├── auth/
 │   │   │   │   ├── auth.service.ts
-│   │   │   │   ├── auth.guard.ts
-│   │   │   │   ├── auth.interceptor.ts
-│   │   │   │   └── token-storage.service.ts
-│   │   │   ├── api/
-│   │   │   │   ├── design-api.service.ts
-│   │   │   │   └── api-config.ts
-│   │   │   ├── state/
-│   │   │   │   └── design-state.service.ts    # Shared 2D/3D design state (Signals)
-│   │   │   └── models/
-│   │   │       ├── design.model.ts
-│   │   │       ├── point.model.ts
-│   │   │       ├── line.model.ts
-│   │   │       └── user.model.ts
+│   │   │   │   └── auth.service.spec.ts
+│   │   │   └── state/
+│   │   │       ├── design-state.service.ts       # Shared 2D/3D design state (Signals)
+│   │   │       └── design-state.service.spec.ts
 │   │   │
-│   │   ├── shared/                  # Reusable presentational components
-│   │   │   ├── components/
-│   │   │   │   ├── toolbar/
-│   │   │   │   ├── zoom-controls/
-│   │   │   │   ├── toast/
-│   │   │   │   └── loading-spinner/
-│   │   │   ├── directives/
-│   │   │   └── pipes/
+│   │   ├── layout/                    # Application shell
+│   │   │   ├── layout.component.ts           # Orchestrates the shell regions
+│   │   │   ├── layout.component.html
+│   │   │   ├── layout.component.scss
+│   │   │   ├── layout.component.spec.ts
+│   │   │   ├── header/
+│   │   │   │   ├── header.component.ts       # Top bar
+│   │   │   │   ├── header.component.html
+│   │   │   │   ├── header.component.scss
+│   │   │   │   └── header.component.spec.ts
+│   │   │   ├── body/
+│   │   │   │   ├── body.component.ts         # Central area (hosts left/right panels)
+│   │   │   │   ├── body.component.html
+│   │   │   │   ├── body.component.scss
+│   │   │   │   └── body.component.spec.ts
+│   │   │   ├── left/
+│   │   │   │   ├── left.component.ts         # Left panel (2D editor region)
+│   │   │   │   ├── left.component.html
+│   │   │   │   ├── left.component.scss
+│   │   │   │   └── left.component.spec.ts
+│   │   │   ├── right/
+│   │   │   │   ├── right.component.ts        # Right panel (3D preview region)
+│   │   │   │   ├── right.component.html
+│   │   │   │   ├── right.component.scss
+│   │   │   │   └── right.component.spec.ts
+│   │   │   └── footer/
+│   │   │       ├── footer.component.ts       # Bottom bar
+│   │   │       ├── footer.component.html
+│   │   │       ├── footer.component.scss
+│   │   │       └── footer.component.spec.ts
 │   │   │
-│   │   ├── features/
-│   │   │   ├── auth/
-│   │   │   │   ├── login/
-│   │   │   │   └── register/
-│   │   │   │
-│   │   │   ├── editor/
-│   │   │   │   ├── editor-layout/          # Split view container
-│   │   │   │   ├── canvas-2d/              # 2D pattern drawing component
-│   │   │   │   ├── viewport-3d/            # Three.js scene component
-│   │   │   │   ├── toolbar/                # Editor-specific tools
-│   │   │   │   └── editor.routes.ts
-│   │   │   │
-│   │   │   └── designs/
-│   │   │       ├── design-list/
-│   │   │       ├── design-create/
-│   │   │       └── designs.routes.ts
+│   │   ├── features/                  # Feature modules (lazy-loaded via routes)
+│   │   │   └── editor/
+│   │   │       ├── two-dimensions/           # 2D pattern drawing (Canvas 2D)
+│   │   │       │   ├── two-dimensions.component.ts
+│   │   │       │   ├── two-dimensions.component.html
+│   │   │       │   ├── two-dimensions.component.scss
+│   │   │       │   └── two-dimensions.component.spec.ts
+│   │   │       └── three-dimensions/         # 3D viewport (Three.js + OrbitControls)
+│   │   │           ├── three-dimensions.component.ts
+│   │   │           ├── three-dimensions.component.html
+│   │   │           ├── three-dimensions.component.scss
+│   │   │           └── three-dimensions.component.spec.ts
 │   │   │
-│   │   ├── app.component.ts
-│   │   ├── app.component.html
-│   │   ├── app.component.scss
+│   │   ├── app.ts                     # Root component
+│   │   ├── app.html
+│   │   ├── app.scss
+│   │   ├── app.spec.ts
 │   │   ├── app.config.ts
 │   │   └── app.routes.ts
 │   │
-│   ├── assets/                      # Static assets referenced by src
-│   ├── environments/
-│   │   ├── environment.ts
-│   │   └── environment.prod.ts
-│   ├── styles/
-│   │   ├── _variables.scss
-│   │   ├── _mixins.scss
-│   │   └── global.scss
 │   ├── index.html
-│   └── main.ts
-│
-├── e2e/                             # End-to-end tests (Playwright/Cypress)
+│   ├── main.ts
+│   └── styles.scss                    # Global styles
 │
 ├── .editorconfig
 ├── .gitignore
+├── .prettierrc
 ├── angular.json
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.app.json
 ├── tsconfig.spec.json
+├── LICENSE
 └── README.md
 ```
+
+### Planned additions (not yet implemented)
+
+| Path | Purpose |
+| --- | --- |
+| `core/auth/auth.guard.ts`, `auth.interceptor.ts`, `token-storage.service.ts` | Route protection and JWT handling |
+| `core/api/` | `design-api.service.ts` + API config |
+| `core/models/` | `design`, `point`, `line`, `user` models |
+| `shared/` | Reusable components (toolbar, zoom-controls, toast, loading-spinner), directives, pipes |
+| `features/auth/` (`login/`, `register/`) | Authentication feature |
+| `features/designs/` (`design-list/`, `design-create/`) + `designs.routes.ts` | Design management feature |
+| `public/assets/` | GLTF/GLB models (`tshirt.glb`, `pants.glb`), fabric textures, UI icons |
+| `src/environments/` | `environment.ts` / `environment.prod.ts` |
+| `e2e/` | End-to-end tests (Playwright/Cypress) |
 
 ## 6. Backend Integration Points (Frontend Contracts)
 
@@ -242,6 +258,7 @@ All design endpoints require `Authorization: Bearer <JWT>` header.
 | `@angular/platform-browser` | ^22.0.0 |
 | `@angular/router` | ^22.0.0 |
 | `rxjs` | ~7.8.0 |
+| `three` | ^0.186.1 |
 | `tslib` | ^2.3.0 |
 
 ### Dev
@@ -251,12 +268,13 @@ All design endpoints require `Authorization: Bearer <JWT>` header.
 | `@angular/build` | ^22.0.4 |
 | `@angular/cli` | ^22.0.4 |
 | `@angular/compiler-cli` | ^22.0.0 |
+| `@types/three` | ^0.186.0 |
 | `typescript` | ~6.0.2 |
 | `vitest` | ^4.0.8 |
 | `jsdom` | ^28.0.0 |
 | `prettier` | ^3.8.1 |
 
-> **Missing per spec**: `three`, `@types/three`, and optionally `panzoom` are not yet installed.
+> **Pending per spec**: `panzoom` (optional, for 2D canvas zoom/pan gestures) is not yet installed.
 
 ## 9. Commands
 
@@ -269,6 +287,8 @@ npm test         # Ejecutar tests (ng test / vitest)
 ```
 
 ### Dependencias 3D (Three.js)
+
+`three` y `@types/three` ya están instalados. Si fuera necesario reinstalarlos:
 
 ```bash
 npm install three                    # Librería de renderizado 3D

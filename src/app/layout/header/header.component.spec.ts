@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ViewportThreeD } from './viewport-three-d';
+import { HeaderComponent } from './header.component';
 
-describe('ViewportThreeD', () => {
-  let component: ViewportThreeD;
-  let fixture: ComponentFixture<ViewportThreeD>;
+describe('HeaderComponent', () => {
+  let component: HeaderComponent;
+  let fixture: ComponentFixture<HeaderComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ViewportThreeD],
+      imports: [HeaderComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ViewportThreeD);
+    fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

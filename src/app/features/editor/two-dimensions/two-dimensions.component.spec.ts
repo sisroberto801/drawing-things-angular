@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CanvasTwoD } from './canvas-two-d';
+import { TwoDimensionsComponent } from './two-dimensions.component';
 
-describe('CanvasTwoD', () => {
-  let component: CanvasTwoD;
-  let fixture: ComponentFixture<CanvasTwoD>;
+describe('TwoDimensionsComponent', () => {
+  let component: TwoDimensionsComponent;
+  let fixture: ComponentFixture<TwoDimensionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CanvasTwoD],
+      imports: [TwoDimensionsComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CanvasTwoD);
+    fixture = TestBed.createComponent(TwoDimensionsComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
